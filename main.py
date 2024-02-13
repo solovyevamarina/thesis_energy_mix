@@ -22,5 +22,5 @@ raw_datasets = {}
 for country, timezone in zip(countries, time_zones):
     download_function(country, timezone, start_time, end_time, raw_datasets, my_path, my_api_key)
 
-################################################## CLEAN DATA ##########################################################
+############################################## CLEAN & UNITE DATA ######################################################
 

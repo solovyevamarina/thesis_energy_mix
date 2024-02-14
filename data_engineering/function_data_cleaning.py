@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 
 
 def clean_columns(file_name_gen, file_name_price, file_name_load, raw_datasets):

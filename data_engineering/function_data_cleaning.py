@@ -92,7 +92,7 @@ def data_cleaning_function(country,  s_time, e_time, timezone, d_dataset, a_data
     all_db['Price'] = all_db['Price'].fillna(method='bfill')
 
     # Recalculate sum:
-    all_db['Sum'] = all_db[1:-3].sum(axis=1)
+    all_db['Sum'] = all_db[list(all_db.columns)[1:-3]].sum(axis=1)
 
     # Combine in a dataset
     a_dataset[file_name] = all_db.copy()

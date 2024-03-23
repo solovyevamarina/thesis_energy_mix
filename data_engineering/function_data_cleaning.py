@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def clean_columns(file_name_gen, file_name_price, file_name_load, raw_datasets):
+def clean_columns(file_name_gen, file_name_price, file_name_load, file_name_flow, raw_datasets):
 
     # Energy generation
     gen_db = raw_datasets[file_name_gen]
@@ -60,6 +60,11 @@ def clean_columns(file_name_gen, file_name_price, file_name_load, raw_datasets):
     if 'Actual Load' in load_db.columns:
         load_db.rename(columns={'Actual Load': 'Load'}, inplace=True)
 
+    # Energy flow
+    flow_db = raw_datasets[file_name_flow]
+    flow_db.rename(columns={'Unnamed: 0': 'Datetime'}, inplace=True)
+    flow_db.rename(columns={'0': 'Flow'}, inplace=True)
+
     return raw_datasets
 
 
@@ -70,8 +75,9 @@ def data_cleaning_function(country,  s_time, e_time, timezone, d_dataset, a_data
     file_name_gen = f"{country}_gen_{s_time}_{e_time}"
     file_name_price = f"{country}_price_{s_time}_{e_time}"
     file_name_load = f"{country}_load_{s_time}_{e_time}"
+    file_name_flow = f"{country}_flow_{s_time}_{e_time}"
 
-    c_dataset = clean_columns(file_name_gen, file_name_price, file_name_load, d_dataset)
+    c_dataset = clean_columns(file_name_gen, file_name_price, file_name_load, file_name_flow, d_dataset)
 
     start_timestamp = pd.Timestamp(s_time, tz=timezone)
     end_timestamp = pd.Timestamp(e_time, tz=timezone)

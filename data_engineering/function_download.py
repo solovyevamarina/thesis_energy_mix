@@ -94,6 +94,8 @@ def download_function(country, timezone, s_time, e_time, d_dataset, path, api_ke
 
         else:
             print('Start downloading energy flow data', country, s_time, '-', e_time)
+            flow_partners = []
+
             if country == 'GR':
                 flow_partners = ['AL', 'BG', 'IT', 'TR', 'MK']
             elif country == 'PL':

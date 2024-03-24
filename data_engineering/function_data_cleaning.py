@@ -88,6 +88,7 @@ def data_cleaning_function(country,  s_time, e_time, timezone, d_dataset, a_data
     all_db = pd.merge(all_db, c_dataset[file_name_gen].copy(), on='Datetime', how='left')
     all_db = pd.merge(all_db, c_dataset[file_name_price].copy(), on='Datetime', how='left')
     all_db = pd.merge(all_db, c_dataset[file_name_load].copy(), on='Datetime', how='left')
+    all_db = pd.merge(all_db, c_dataset[file_name_flow].copy(), on='Datetime', how='left')
     all_db.drop_duplicates(subset='Datetime', keep="last")
 
     # Missing values handling

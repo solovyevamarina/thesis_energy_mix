@@ -83,7 +83,7 @@ def data_cleaning_function(country,  s_time, e_time, timezone, d_dataset, a_data
     end_timestamp = pd.Timestamp(e_time, tz=timezone)
 
     all_db = pd.DataFrame()
-    all_db['Datetime'] = pd.date_range(start=start_timestamp, end=end_timestamp, freq='H')[0:-1].astype(str)
+    all_db['Datetime'] = pd.date_range(start=start_timestamp, end=end_timestamp, freq='h')[0:-1].astype(str)
 
     all_db = pd.merge(all_db, c_dataset[file_name_gen].copy(), on='Datetime', how='left')
     all_db = pd.merge(all_db, c_dataset[file_name_price].copy(), on='Datetime', how='left')
@@ -93,10 +93,10 @@ def data_cleaning_function(country,  s_time, e_time, timezone, d_dataset, a_data
 
     # Missing values handling
     for n in list(all_db.columns):
-        all_db[n] = all_db[n].interpolate()
+        all_db[n] = all_db[n].infer_objects(copy=False)
         all_db[n] = all_db[n].fillna(0)
         continue
-    all_db['Price'] = all_db['Price'].fillna(method='bfill')
+    all_db['Price'] = all_db['Price'].bfill()
 
     # Recalculate sum:
     all_db['Sum'] = all_db[list(all_db.columns)[1:-3]].sum(axis=1)

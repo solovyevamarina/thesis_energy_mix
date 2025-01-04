@@ -2,16 +2,6 @@ import pandas as pd
 import holidays
 from data_engineering.function_download import download_function
 from data_engineering.function_data_cleaning import data_cleaning_function
-country = 'GR'
-timezone = 'Europe/Athens'
-s_time = '20150101'
-e_time = '20221101'
-my_api_key = '611caff8-769f-4d12-8a5e-838efb1f684a'
-my_path = 'E:/Study/Diploma/csv'
-raw_datasets = {}
-a_dataset = {}
-download_function(country, timezone, s_time, e_time, raw_datasets, my_path, my_api_key)
-data_cleaning_function(country, s_time, e_time, timezone, raw_datasets, a_dataset)
 
 
 def feature_engineering(a_dataset, country, s_time, e_time):

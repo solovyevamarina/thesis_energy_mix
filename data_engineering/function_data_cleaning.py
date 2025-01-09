@@ -65,22 +65,28 @@ def clean_columns(file_name_gen, file_name_price, file_name_load, file_name_flow
     flow_db.rename(columns={'Unnamed: 0': 'Datetime'}, inplace=True)
     flow_db.rename(columns={'0': 'Flow'}, inplace=True)
 
+    # Convert 'Datetime' column in flow_db from UTC to Europe/Athens (UTC+2)
+    flow_db['Datetime'] = pd.to_datetime(flow_db['Datetime'])  # Ensure it's datetime
+    flow_db['Datetime'] = flow_db['Datetime'].dt.tz_convert('UTC').dt.tz_localize(None)  # Remove timezone info
+    flow_db['Datetime'] = flow_db['Datetime'].dt.tz_localize('UTC').dt.tz_convert('Europe/Athens')  # Convert to UTC+2
+    flow_db['Datetime'] = flow_db['Datetime'].astype(str)
+
     return raw_datasets
 
 
-def data_cleaning_function(country,  s_time, e_time, timezone, d_dataset, a_dataset):
+def data_cleaning_function(country,  start_time, end_time, timezone, raw_datasets, all_datasets):
 
     # Unite generation, prices and load in one dataset
-    file_name = f"{country}_{s_time}_{e_time}"
-    file_name_gen = f"{country}_gen_{s_time}_{e_time}"
-    file_name_price = f"{country}_price_{s_time}_{e_time}"
-    file_name_load = f"{country}_load_{s_time}_{e_time}"
-    file_name_flow = f"{country}_flow_{s_time}_{e_time}"
+    file_name = f"{country}_{start_time}_{end_time}"
+    file_name_gen = f"{country}_gen_{start_time}_{end_time}"
+    file_name_price = f"{country}_price_{start_time}_{end_time}"
+    file_name_load = f"{country}_load_{start_time}_{end_time}"
+    file_name_flow = f"{country}_flow_{start_time}_{end_time}"
 
-    c_dataset = clean_columns(file_name_gen, file_name_price, file_name_load, file_name_flow, d_dataset)
+    c_dataset = clean_columns(file_name_gen, file_name_price, file_name_load, file_name_flow, raw_datasets)
 
-    start_timestamp = pd.Timestamp(s_time, tz=timezone)
-    end_timestamp = pd.Timestamp(e_time, tz=timezone)
+    start_timestamp = pd.Timestamp(start_time, tz=timezone)
+    end_timestamp = pd.Timestamp(end_time, tz=timezone)
 
     all_db = pd.DataFrame()
     all_db['Datetime'] = pd.date_range(start=start_timestamp, end=end_timestamp, freq='h')[0:-1].astype(str)
@@ -102,6 +108,6 @@ def data_cleaning_function(country,  s_time, e_time, timezone, d_dataset, a_data
     all_db['Sum'] = all_db[list(all_db.columns)[1:-3]].sum(axis=1)
 
     # Combine in a dataset
-    a_dataset[file_name] = all_db.copy()
+    all_datasets[file_name] = all_db.copy()
 
-    return a_dataset
+    return all_datasets

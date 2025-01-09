@@ -140,8 +140,7 @@ def download_function(country, timezone, s_time, e_time, d_dataset, path, api_ke
         ttf_yf2['TTF'] = ttf_yf['Close'].reset_index(drop=True).copy()
 
         # for older dates, the results were collected manually from investing.com
-        # ttf_old = pd.read_csv("E:/Study/Diploma/csv/TTF_Older_Prices.csv")
-        ttf_old = pd.read_csv("C:/Users/SLAVA/Documents/Study/Diploma/csv/TTF_Older_Prices.csv")
+        ttf_old = pd.read_csv("F:/Study/Diploma/csv/TTF_Older_Prices.csv")
 
         yf_end = ttf_yf2['Date'][0]
         ttf_old2 = ttf_old.loc[ttf_old['Date'] < yf_end]

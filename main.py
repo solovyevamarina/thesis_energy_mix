@@ -1,11 +1,9 @@
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
-import pandas as pd
 from data_engineering.function_download import download_function
 from data_engineering.function_data_cleaning import data_cleaning_function
-from data_engineering.function_feature_engineering import feature_engineering, county_data_model_preparation
-from data_visualization.county_data_graphs import (generate_energy_mix_pie_chart, generate_energy_stack_plot,
-                                                   generate_timeline_plot, generate_price_timeline_plot)
+from data_engineering.function_feature_engineering import feature_engineering
+from data_visualization.function_generate_plots import generate_descriptive_plots
 
 # Choose the set of countries and their respective time zones
 countries = ['GR', 'PL', 'SE']
@@ -21,8 +19,10 @@ my_path = 'F:/Study/Diploma/csv'
 raw_datasets = {}
 all_datasets = {}
 
+
 country_configs = {
     'GR': {
+        'country_name': ['Ελλάδα'],
         'sources': ['Coal', 'Gas', 'Oil', 'Solar', 'Wind', 'Hydro'],
         'labels': ('Λινίτης', 'Φυσικό Αέριο', 'Πετρέλαιο', 'Φωτοβολταϊκά', 'Αιολικά', 'Ύδροηλεκτρικά'),
         'colors': ['brown', 'teal', 'black', 'yellow', 'skyblue', 'blue'],
@@ -30,6 +30,7 @@ country_configs = {
         'renewable_sources': ['Solar', 'Wind', 'Hydro']
     },
     'PL': {
+        'country_name': ['Πολωνία'],
         'sources': ['Biomass', 'Coal', 'Hard Coal', 'Coal Gas', 'Gas', 'Oil', 'Solar', 'Wind', 'Hydro'],
         'labels': ('Βιομάζα', 'Λινίτης', 'Άνθρακας', 'Ανθρακαέριο', 'Φυσικό Αέριο', 'Πετρέλαιο', 'Φωτοβολταϊκά', 'Αιολικά', 'Ύδροηλεκτρικά'),
         'colors': ['olive', 'brown', 'dimgray', 'slategrey', 'teal', 'black', 'yellow', 'skyblue', 'blue'],
@@ -37,6 +38,7 @@ country_configs = {
         'renewable_sources': ['Biomass', 'Hydro', 'Solar', 'Wind']
     },
     'SE': {
+        'country_name': ['Σουηδία'],
         'sources': ['Gas', 'Nuclear', 'Hydro', 'Solar', 'Wind', 'Other'],
         'labels': ('Φυσικό Αέριο', 'Πυρηνικά', 'Ύδροηλεκτρικά', 'Φωτοβολταϊκά', 'Αιολικά', 'Λοιπά ΑΕΠ'),
         'colors': ['teal', 'purple', 'blue', 'yellow', 'skyblue', 'gray'],
@@ -56,9 +58,9 @@ country = 'GR'
 timezone = 'Europe/Athens'
 
 download_function(country, timezone, start_time, end_time, raw_datasets, my_path, my_api_key)
-data_cleaning_function(country, start_time, end_time, timezone, raw_datasets, all_datasets)
-feature_engineering(all_datasets, country, start_time, end_time)
-country_data = county_data_model_preparation(all_datasets, raw_datasets, country, timezone, start_time, end_time, country_configs)
+data_cleaning_function(country, start_time, end_time, timezone, raw_datasets, all_datasets,country_configs)
+feature_engineering(all_datasets, country, start_time, end_time, country_configs)
+generate_descriptive_plots(all_datasets, country, start_time, end_time, country_configs)
 
 # generate_energy_mix_pie_chart(all_datasets, country, start_time, end_time)
 # generate_energy_stack_plot(all_datasets, country, start_time, end_time)

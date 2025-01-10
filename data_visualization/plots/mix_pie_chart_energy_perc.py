@@ -6,7 +6,7 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import gc
 
-def generate_energy_mix_pie_chart(dataset, country, s_time, e_time, country_configs):
+def generate_energy_mix_pie_chart(country_data, country, s_time, e_time, country_configs):
 
     save_path = f"plots/energy_mix_pie_chart_{country}_{s_time[:4]}_{e_time[:4]}.jpg"
     # Get the configuration for the specified country
@@ -17,10 +17,6 @@ def generate_energy_mix_pie_chart(dataset, country, s_time, e_time, country_conf
     energy_sources = config['sources']
     labels = config['labels']
     colors = config['colors']
-
-    # Extract data for the specified country and time period
-    file_name = f"{country}_{s_time}_{e_time}"
-    country_data = dataset[file_name].copy()
 
     # Calculate mean shares of energy sources
     mean_share = country_data[energy_sources].mean(axis=0)
@@ -60,7 +56,7 @@ def generate_energy_mix_pie_chart(dataset, country, s_time, e_time, country_conf
     gc.collect()
 
 
-def calculate_yearly_energy_percentages(dataset, country, s_time, e_time, country_configs):
+def calculate_yearly_energy_percentages(country_data, country, s_time, e_time, country_configs):
     save_path = f"plots/yearly_energy_percentages_{country}_{s_time[:4]}_{e_time[:4]}.csv"
 
     # Validate country configuration
@@ -81,13 +77,10 @@ def calculate_yearly_energy_percentages(dataset, country, s_time, e_time, countr
 
     # Loop through each year in the range
     for year in range(start_year, end_year + 1):
-        file_name = f"{country}_{s_time}_{e_time}"
-        if file_name not in dataset:
-            continue  # Skip if the data for the year is missing
 
         # Extract data for the current year
-        dataset[file_name]['Year'] = dataset[file_name]['Year'].astype(int)
-        year_data = dataset[file_name][dataset[file_name]['Year'] == year][energy_sources].mean(axis=0)
+        country_data['Year'] = country_data['Year'].astype(int)
+        year_data = country_data[country_data['Year'] == year][energy_sources].mean(axis=0)
 
         # Calculate fossil and renewable shares
         all_fossil = sum(year_data.loc[source] for source in fossil_sources if source in year_data)

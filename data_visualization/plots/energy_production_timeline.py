@@ -8,29 +8,25 @@ import matplotlib.pyplot as plt
 import gc
 
 
-def generate_timeline_plot(a_dataset, country, s_time, e_time, country_configs):
+def generate_timeline_plot(country_data, country, s_time, e_time, country_configs):
     # Generate the save path with the country name and time range
     save_path = f"plots/energy_stack_plot_{country}_{s_time[:4]}_{e_time[:4]}.jpg"
-
-    # Get the dataset for the specified country and time range
-    file_name = f"{country}_{s_time}_{e_time}"
-    dataset = a_dataset[file_name].copy()
 
     # Extract years from start_time and end_time
     start_year = int(s_time[:4])  # First 4 characters of s_time
     end_year = int(e_time[:4])  # First 4 characters of e_time
 
     # Convert 'Date' column to datetime
-    dataset['Date'] = pd.to_datetime(dataset['Date'])
+    country_data['Date'] = pd.to_datetime(country_data['Date'])
 
     # Create 'Year' and 'Month' columns only if they do not already exist
-    if 'Year' not in dataset.columns:
-        dataset['Year'] = dataset['Date'].dt.year
-    if 'Month' not in dataset.columns:
-        dataset['Month'] = dataset['Date'].dt.month
+    if 'Year' not in country_data.columns:
+        country_data['Year'] = country_data['Date'].dt.year
+    if 'Month' not in country_data.columns:
+        country_data['Month'] = country_data['Date'].dt.month
 
     # Calculate yearly averages for 'Sum'
-    GR_y_avg = dataset[['Year', 'Sum']].groupby('Year')['Sum'].mean().reset_index()
+    GR_y_avg = country_data[['Year', 'Sum']].groupby('Year')['Sum'].mean().reset_index()
 
     # Adjust for leap years
     for year in GR_y_avg['Year']:
@@ -40,7 +36,7 @@ def generate_timeline_plot(a_dataset, country, s_time, e_time, country_configs):
 
     # Calculate monthly averages
     GR_ym_avg = (
-        dataset[['Year', 'Month', 'Sum']]
+        country_data[['Year', 'Month', 'Sum']]
         .groupby(['Year', 'Month'])['Sum']
         .mean()
         .reset_index()
@@ -48,8 +44,8 @@ def generate_timeline_plot(a_dataset, country, s_time, e_time, country_configs):
     GR_ym_avg['Date'] = pd.to_datetime(GR_ym_avg[['Year', 'Month']].assign(Day=1))
 
     # Prepare data for plotting
-    xs = dataset['Date']
-    series1 = np.array(dataset['Sum']).astype(np.double)
+    xs = country_data['Date']
+    series1 = np.array(country_data['Sum']).astype(np.double)
     s1mask = np.isfinite(series1)
 
     series2 = np.array(GR_ym_avg['Sum']).astype(np.double)
